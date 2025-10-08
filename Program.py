@@ -1,3 +1,4 @@
+import os
 import sys
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -62,8 +63,6 @@ def final_report(buying, selling):
     table.loc["All Products"] = table.sum(numeric_only=True)
     return table
 
-import matplotlib.pyplot as plt
-
 def save_graph(table, filename):
     df = table.drop("All Products", errors="ignore")[["Sell.Rev.", "Buy.Rev.", "Net"]]
     ax = df.plot(kind="bar", figsize=(10,6))
@@ -74,12 +73,14 @@ def save_graph(table, filename):
     plt.close()
     print("Graph saved to", filename)
 
-
 # ------------------ Main ------------------
 
 def main():
-    creds = pd.read_csv("Entry Data.csv")
-    host, user, pwd = creds.Data[:3]
+    # Get credentials from environment variables
+    host = os.getenv("MYSQL_HOST", "localhost")
+    user = os.getenv("MYSQL_USER", "root")
+    pwd = os.getenv("MYSQL_PASSWORD", "")
+
     conn1 = connect_db(host, user, pwd, "module_add")
     conn2 = connect_db(host, user, pwd, "enterprise_sales")
 
